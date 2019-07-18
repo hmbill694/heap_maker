@@ -32,7 +32,7 @@ def main():
         print("What operations would you like to preform on the heap")
         print("1. Insert into heap")
         print("2. Delete value from the heap")
-        print("3. Extract max/min value (This will depend on the Heap type)")
+        print("3. Extract max")
         print("4. Use Heapsort (will only display sorted heap)")
         print("5. Print the heap")
         print("6. Exit program")
@@ -40,9 +40,20 @@ def main():
         choice = input("Preform operation: ")
 
         if choice == "1":
-            pass
+            value = int(input("What value would you like to insert: "))
+            my_heap.insert(value)
         elif choice == "2":
-            pass
+            delete = int(
+                input(
+                    "What please enter the element number you want to delete in range 0 - {}: "
+                    .format(my_heap.current_capacity - 1)))
+            while True:
+                if delete > my_heap.current_capacity:
+                    print("Please enter a element within the range {}".format(
+                        my_heap.current_capacity - 1))
+                else:
+                    break
+            my_heap.delete(delete)
         elif choice == "3":
             element = my_heap.extract_root()
             print("The value extracted from the heap is: {}".format(

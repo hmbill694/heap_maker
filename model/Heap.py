@@ -37,6 +37,33 @@ class Heap(object):
         """Setter for list"""
         self.__element_list = new_list
 
+    # Private Methods
+    def _swap_elements(self, element_list, element_1_index, element_2_index):
+        """Swaps values"""
+        element_list[element_1_index], element_list[
+            element_2_index] = element_list[element_2_index], element_list[
+                element_1_index]
+
+    def _bubble_up(self, index):
+        """Shifts an element up in the heap"""
+        # Get index of parent element
+        parent_index = (index - 1) // 2
+
+        # New element is the element at the end of the list
+        new_element = self.element_list[index]
+
+        # As long as we aren't at the top
+        if index != 0:
+
+            # parent element is half the child element (integer division)
+            parent_elemet = self.element_list[parent_index]
+
+            # if the value of the parent elemet is less than the new element
+            if (parent_elemet.value < new_element.value):
+                self._swap_elements(self.element_list, index, parent_index)
+                self._bubble_up(parent_index)
+
+    # Public Methods
     def heapify(self, index):
         """A method that will reorder the heap by comparing parent element 
            values to child element values. If the value of the child elements
@@ -60,12 +87,14 @@ class Heap(object):
         else:
             right = Element(min_int)
 
+        # If left is valid and its value is larger left is largest
         if left_index <= (self.current_capacity -
                           1) and left.value > parent.value:
             largest = left
         else:
             largest = parent
 
+        # If right is valid and its value is larger right is largest
         if right_index <= (self.current_capacity -
                            1) and right.value >= largest.value:
             largest = right
@@ -77,8 +106,9 @@ class Heap(object):
         else:
             largest_index = right_index
 
+        # if the parent isn't largest swap the elements and reheapify
         if largest != parent:
-            Heap().swap_elements(self.element_list, index, largest_index)
+            self._swap_elements(self.element_list, index, largest_index)
             self.heapify(largest_index)
 
     @staticmethod
@@ -92,23 +122,18 @@ class Heap(object):
         my_heap = Heap()
         my_heap.current_capacity = in_capacity
 
+        # For every number input create element and add to heap
         for entry in in_data:
             element = Element(None)
             element.value = entry
             my_heap.element_list.append(element)
 
+        # Heapify all parent nodes
         for element in range((math.floor(len(my_heap.element_list) / 2) - 1),
                              -1, -1):
             my_heap.heapify(element)
 
         return my_heap
-
-    @staticmethod
-    def swap_elements(element_list, element_1_index, element_2_index):
-        """Swaps values"""
-        element_list[element_1_index], element_list[
-            element_2_index] = element_list[element_2_index], element_list[
-                element_1_index]
 
     def print_heap(self):
         """Prints the heap"""
@@ -124,7 +149,7 @@ class Heap(object):
         # swap first and last element in heap and reheapify the 1st element
         # do this while the size of the heap is greater than 1
         while self.current_capacity > 1:
-            Heap.swap_elements(self.element_list, 0, current_element)
+            self._swap_elements(self.element_list, 0, current_element)
             self.current_capacity -= 1
             current_element -= 1
             self.heapify(0)
@@ -147,7 +172,7 @@ class Heap(object):
         root_element = None
 
         # swap root and last value in heap
-        Heap.swap_elements(self.element_list, 0, self.current_capacity - 1)
+        self._swap_elements(self.element_list, 0, self.current_capacity - 1)
 
         # pop of last element and set new capacity
         root_element = self.element_list.pop(self.current_capacity - 1)
@@ -159,5 +184,26 @@ class Heap(object):
         return root_element
 
     def insert(self, value):
-        new_element = Element()
-        new_element.value = value
+        """This method will insert an element in the
+        heap that will have a value input by the user"""
+
+        # Create a new element
+        new_element = Element(value)
+
+        # increment capacity and add element
+        self.current_capacity += 1
+        self.element_list.append(new_element)
+
+        # bubble up the new eleemnt
+        self._bubble_up(self.current_capacity - 1)
+
+    def delete(self, index):
+        """This method will delete an element at inputed index"""
+        # get last element in heap and the element that is being deleted
+
+        # swapped the element you are deleting with the last element
+        self._swap_elements(self.element_list, index,
+                            (self.current_capacity - 1))
+
+        #heapify at index
+        self.heapify(index)
